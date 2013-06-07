@@ -29,7 +29,7 @@ namespace SendPushoverNotification
             {
                 if (Configuration.NetworkProxy.UseNetworkProxy)
                 {
-                    var credential = new NetworkCredential(Environment.UserName, GetPasswordFromConsoleInput(), Environment.UserDomainName);
+                    var credential = new NetworkCredential(Environment.UserName, GetPasswordFromConsoleInput().ToString(), Environment.UserDomainName);
                     var webProxyAddress = string.Concat(Configuration.NetworkProxy.Server, ":", Configuration.NetworkProxy.Port);
                     client.Proxy = new WebProxy(webProxyAddress, false, null, credential);
                 }
@@ -41,7 +41,7 @@ namespace SendPushoverNotification
 
         private NameValueCollection CreatePostParameters()
         {
-            var parameters = new NameValueCollection
+			var parameters = new NameValueCollection
                 {
                     {"token", Configuration.Pushover.Token},
                     {"user", Configuration.Pushover.User},

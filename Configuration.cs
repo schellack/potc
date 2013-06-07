@@ -9,17 +9,41 @@ namespace SendPushoverNotification
         {
             public static string Url
             {
-                get { return ConfigurationManager.AppSettings.Get("PushoverUrl"); }
+                get 
+                { 
+                    var url = ConfigurationManager.AppSettings.Get ("PushoverUrl");
+                    if(string.IsNullOrWhiteSpace(url))
+                        throw new ConfigurationErrorsException("Pushover URL must be configured.");
+                    Uri uri;
+                    if (!Uri.TryCreate (url, UriKind.Absolute, out uri))
+                    {
+                        var badUrlMessage = string.Format ("Configured Pushover URL is not a valid URL: {0}", url);
+                        throw new ConfigurationErrorsException (badUrlMessage);
+                    }
+                    return url;
+                }
             }
 
             public static string Token
             {
-                get { return ConfigurationManager.AppSettings.Get("PushoverToken"); }
+                get 
+                {
+                    var token = ConfigurationManager.AppSettings.Get ("PushoverToken");
+                    if(string.IsNullOrWhiteSpace(token))
+                        throw new ConfigurationErrorsException("Pushover Token must be configured.");
+                    return token;
+                }
             }
 
             public static string User
             {
-                get { return ConfigurationManager.AppSettings.Get("PushoverUser"); }
+                get
+                {
+                    var user = ConfigurationManager.AppSettings.Get ("PushoverUser");
+                    if(string.IsNullOrWhiteSpace(user))
+                        throw new ConfigurationErrorsException("Pushover User must be configured.");
+                    return user;
+                }
             }
         }
 

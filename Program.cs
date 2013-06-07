@@ -43,12 +43,9 @@ namespace SendPushoverNotification
             var pusher = new PushoverPoster(title, url, message);
             var succeeded = pusher.Post();
 
-            if (Environment.UserInteractive)
-            {
-                Console.WriteLine("Post sent.");
-                System.Threading.Thread.Sleep(2000);
-            }
-
+            Console.WriteLine("Post sent.");
+            System.Threading.Thread.Sleep(2000);
+            
             return succeeded ? 1 : 0;
         }
 
