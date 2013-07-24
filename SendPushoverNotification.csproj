@@ -50,9 +50,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Configuration.cs" />
+    <Compile Include="ConsoleHelper.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PushoverPoster.cs" />
+    <Compile Include="PushRequest.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="favicon.ico" />

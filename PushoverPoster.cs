@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.Linq;
 using System.Net;
-using System.Security;
-using System.Text;
 
 namespace SendPushoverNotification
 {
@@ -13,12 +9,14 @@ namespace SendPushoverNotification
         private string _title;
         private string _url;
         private string _message;
+        private readonly ConsoleHelper _consoleHelper;
 
         public PushoverPoster(string title, string url, string message)
         {
             _message = message;
             _title = title;
             _url = url;
+            _consoleHelper = new ConsoleHelper();
         }
 
         public bool Post()
@@ -29,9 +27,7 @@ namespace SendPushoverNotification
             {
                 if (Configuration.NetworkProxy.UseNetworkProxy)
                 {
-                    var credential = new NetworkCredential(Environment.UserName, GetPasswordFromConsoleInput().ToString(), Environment.UserDomainName);
-                    var webProxyAddress = string.Concat(Configuration.NetworkProxy.Server, ":", Configuration.NetworkProxy.Port);
-                    client.Proxy = new WebProxy(webProxyAddress, false, null, credential);
+                    client.Proxy = GetProxy();
                 }
                 client.UploadValues(Configuration.Pushover.Url, parameters);
             }
@@ -41,7 +37,7 @@ namespace SendPushoverNotification
 
         private NameValueCollection CreatePostParameters()
         {
-			var parameters = new NameValueCollection
+            var parameters = new NameValueCollection
                 {
                     {"token", Configuration.Pushover.Token},
                     {"user", Configuration.Pushover.User},
@@ -52,31 +48,13 @@ namespace SendPushoverNotification
             return parameters;
         }
 
-        public SecureString GetPasswordFromConsoleInput()
+        private IWebProxy GetProxy()
         {
-            var pass = new SecureString();
-            ConsoleKeyInfo key;
-
-            Console.WriteLine("Enter password:");
-
-            do
-            {
-                key = Console.ReadKey(true);
-
-                if (Char.IsLetterOrDigit(key.KeyChar) || Char.IsPunctuation(key.KeyChar))
-                {
-                    pass.AppendChar(key.KeyChar);
-                    Console.Write("*");
-                }
-                else if (key.Key != ConsoleKey.Enter)
-                {
-                    Console.Beep();
-                    Console.Error.WriteLine("That character is not allowed.");
-                }
-            } while (key.Key != ConsoleKey.Enter);
-
-            Console.WriteLine();
-            return pass;
+            var credential = new NetworkCredential(Environment.UserName,
+                                                   _consoleHelper.GetPasswordFromConsoleInput().ToString(),
+                                                   Environment.UserDomainName);
+            var webProxyAddress = string.Concat(Configuration.NetworkProxy.Server, ":", Configuration.NetworkProxy.Port);
+            return new WebProxy(webProxyAddress, false, null, credential);
         }
     }
 }
